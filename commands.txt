@@ -1,0 +1,68 @@
+AgriGuard — commands reference
+================================
+
+Run these from the agriguard/ directory.
+
+1. Activate the virtual environment
+   source .venv/bin/activate
+
+2. (Only if dependencies change) install/update packages
+   pip install -r requirements.txt
+
+3. Make sure Ollama is running and the model is pulled (one-time / if not already running)
+   ollama list
+   ollama serve &
+   ollama pull gemma4:e4b
+
+4. Run the whole project (scripted demo + dashboard generation) — one-shot, exits when done
+   python run.py
+
+   Runs the 6 fixed scenarios once, prints a cost summary, then EXITS. Telegram alerts may
+   fire during this, but nothing is listening for a reply — the process is already gone by
+   the time you'd reply, so replying does nothing. This prints a file:// URL (and, on WSL,
+   a C:\... Windows path too) — open that in your browser to see the dashboard.
+
+5. Run live monitoring mode instead — continuous, THIS is the one where Telegram replies work:
+   python -m src.live_monitor
+
+   - Prints the dashboard path immediately — open it now, it auto-refreshes every 10s.
+   - Background "sensors" write new readings every ~3s; a decision cycle runs every 10s.
+   - The first 3 escalations are guaranteed human-in-the-loop demos (real consensus +
+     notification code, illustrative cloud opinion — costs 0 Gemini calls) so you'll see
+     at least 3 Telegram alerts even though genuine model disagreement is rare.
+   - After that, up to 5 real Gemini calls are spent on genuine live escalations.
+   - A disagreement alert on Telegram ends with a numbered menu, e.g.:
+       1. Spray pesticide
+       2. No action
+     Just reply with the number (e.g. "1"). Free text like "spray it" or "no action"
+     still works too. The reply is parsed, still passed through the real deterministic
+     Safety Rule Layer (so e.g. picking spray still gets blocked if wind is too high),
+     executed, and logged as decision_source="human_confirmed". The bot replies back
+     confirming what it did.
+   - You can also just reply "status" (or "how's it going") any time — no need to wait
+     for an alert — and the bot replies with the latest sensor readings for the zone.
+   - Anything else you type is treated as a question and answered by the local Ollama
+     model (free, unlimited — never spends Gemini quota), using the current snapshot and
+     recent decisions as context. E.g. "why did you spray zone_1 earlier?" or "is the pest
+     risk trending up?". It can't take actions itself — only a menu-number reply does that.
+   - Stop it with Ctrl+C — it prints a final cost summary and call counts on exit.
+
+--------------------------------
+
+Other useful commands (optional, not needed for the main run):
+
+- Run just the orchestrator demo without regenerating the dashboard:
+   python -m src.orchestrator
+
+- Regenerate the dashboard only (reads existing logs, doesn't run new scenarios):
+   python -m dashboard.dashboard
+
+- Run the unit tests:
+   pytest tests/
+
+- Send a demo Telegram notification (real consensus + notification code, illustrative
+  decision inputs — for when a live model disagreement hasn't happened to occur):
+   python -m src.demo_notification
+
+- Deactivate the virtual environment when done:
+   deactivate

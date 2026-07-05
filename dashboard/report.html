@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<title>AgriGuard — Cost &amp; Decision Dashboard</title>
+<style>
+  :root {
+    --surface-1: #fcfcfb; --text-primary: #0b0b0b; --text-secondary: #52514e;
+    --border: #e3e2dc;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --surface-1: #1a1a19; --text-primary: #ffffff; --text-secondary: #c3c2b7; --border: #3a3a37; }
+  }
+  :root[data-theme="dark"] { --surface-1: #1a1a19; --text-primary: #ffffff; --text-secondary: #c3c2b7; --border: #3a3a37; }
+  :root[data-theme="light"] { --surface-1: #fcfcfb; --text-primary: #0b0b0b; --text-secondary: #52514e; --border: #e3e2dc; }
+  body { background: var(--surface-1); color: var(--text-primary); font-family: system-ui, sans-serif; margin: 0; padding: 2rem; }
+  h1 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+  .subtitle { color: var(--text-secondary); margin-bottom: 2rem; }
+  .tiles { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .tile { border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.5rem; min-width: 160px; }
+  .tile-value { font-size: 1.6rem; font-weight: 600; }
+  .tile-label { color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem; }
+  section { margin-bottom: 2rem; }
+  h2 { font-size: 1.05rem; margin-bottom: 1rem; }
+  .bar-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem; }
+  .bar-label { width: 220px; font-size: 0.9rem; color: var(--text-secondary); flex-shrink: 0; }
+  .bar-track { flex: 1; background: var(--border); border-radius: 4px; height: 18px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .bar-value { width: 110px; text-align: right; font-size: 0.85rem; flex-shrink: 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
+  th, td { border-bottom: 1px solid var(--border); padding: 0.4rem 0.6rem; text-align: left; }
+  th { color: var(--text-secondary); font-weight: 500; }
+  .muted { color: var(--text-secondary); }
+  .table-wrap { overflow-x: auto; }
+  .status-grid { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .status-card { border: 1px solid var(--border); border-radius: 8px; padding: 0.9rem 1.1rem; min-width: 260px; flex: 1; }
+  .status-row { display: flex; align-items: center; gap: 0.5rem; }
+  .status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .status-name { font-weight: 600; font-size: 0.9rem; }
+  .status-badge { margin-left: auto; font-size: 0.8rem; font-weight: 600; }
+  .status-detail { color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.35rem; }
+  .trace-card { border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; font-size: 0.88rem; }
+  .trace-header { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.5rem; }
+  .trace-snapshot { font-size: 0.8rem; margin-bottom: 0.75rem; }
+  .discussion { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+  .discussion-col { flex: 1; min-width: 260px; background: var(--border); border-radius: 6px; padding: 0.6rem 0.8rem; }
+  .discussion-role { font-weight: 600; font-size: 0.8rem; margin-bottom: 0.3rem; }
+</style>
+</head>
+<body>
+  <h1>AgriGuard — Cost &amp; Decision Dashboard</h1>
+  <p class="subtitle">Cost-aware multi-agent crop monitoring — decision source breakdown and cascading-cost savings</p>
+  
+
+  <section>
+    <h2>Agent / bot status</h2>
+    <div class="status-grid">
+    <div class="status-card">
+      <div class="status-row">
+        <span class="status-dot" style="background:#0ca30c;"></span>
+        <span class="status-name">Local Decision Agent (Ollama)</span>
+        <span class="status-badge" style="color:#0ca30c;">Online</span>
+      </div>
+      <div class="status-detail">reachable at http://localhost:11434, model=gemma4:e4b (server v0.31.1)</div>
+    </div>
+    <div class="status-card">
+      <div class="status-row">
+        <span class="status-dot" style="background:#8a8a86;"></span>
+        <span class="status-name">Cloud Reasoning Agent (Gemini)</span>
+        <span class="status-badge" style="color:#8a8a86;">Not configured</span>
+      </div>
+      <div class="status-detail">GEMINI_API_KEY not set — falls back to human escalation</div>
+    </div>
+    <div class="status-card">
+      <div class="status-row">
+        <span class="status-dot" style="background:#8a8a86;"></span>
+        <span class="status-name">Notification Agent (Telegram)</span>
+        <span class="status-badge" style="color:#8a8a86;">Not configured</span>
+      </div>
+      <div class="status-detail">TELEGRAM_BOT_TOKEN/CHAT_ID not set — falls back to console</div>
+    </div></div>
+  </section>
+
+  <div class="tiles"><div class='tile'><div class='tile-value'>6</div><div class='tile-label'>Total decisions</div></div><div class='tile'><div class='tile-value'>33.3%</div><div class='tile-label'>Savings vs. all-cloud</div></div><div class='tile'><div class='tile-value'>$0.0400</div><div class='tile-label'>Actual cost</div></div><div class='tile'><div class='tile-value'>$0.0600</div><div class='tile-label'>Hypothetical all-cloud cost</div></div><div class='tile'><div class='tile-value'>0</div><div class='tile-label'>Human confirmations via Telegram</div></div></div>
+
+  <section>
+    <h2>Decisions by source</h2>
+    
+    <div class="bar-row">
+      <div class="bar-label">Local (Ollama, $0)</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:33.3%; background:#2a78d6;"></div>
+      </div>
+      <div class="bar-value">2 (33.3%)</div>
+    </div>
+
+    <div class="bar-row">
+      <div class="bar-label">Escalated to Gemini</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:0.0%; background:#1baf7a;"></div>
+      </div>
+      <div class="bar-value">0 (0.0%)</div>
+    </div>
+
+    <div class="bar-row">
+      <div class="bar-label">Escalated to human</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:66.7%; background:#eda100;"></div>
+      </div>
+      <div class="bar-value">4 (66.7%)</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Cost: cascading vs. all-cloud baseline</h2>
+    
+    <div class="bar-row">
+      <div class="bar-label">Actual (cost-aware cascade)</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:66.7%; background:#2a78d6;"></div>
+      </div>
+      <div class="bar-value">$0.0400</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Hypothetical (all-cloud)</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:100.0%; background:#e34948;"></div>
+      </div>
+      <div class="bar-value">$0.0600</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Agent activity — sensor data, model reasoning, and the local/cloud "discussion"</h2>
+    
+    <div class="trace-card">
+      <div class="trace-header">
+        <span>2026-07-05T14:47:31.442636+00:00</span>
+        <span class="muted">zone=zone_1</span>
+      </div>
+      <div class="muted trace-snapshot">Sensor snapshot: timestamp=2026-07-05T14:47:30.302769+00:00, soil_moisture_pct=65, leaf_health_score=0.9, pest_risk_score=0.9, temperature_c=23.2, wind_speed_kmh=8.4, wind_direction=S, power_available=False, forecast_rain_next_6h=False</div>
+      <div class="discussion">
+        <div class="discussion-col">
+          <div class="discussion-role">Local Decision Agent (Ollama)</div>
+          <strong>spray_pesticide</strong> (confidence 0.95)<br><span class='muted'>The pest risk score is very high (0.9), indicating an immediate threat that requires intervention. While soil moisture (65%) is adequate and leaf health (0.9) is good, the elevated pest pressure necessitates immediate action to prevent yield loss. This concern outweighs the current soil/leaf status.</span>
+        </div>
+        <div class="discussion-col">
+          <div class="discussion-role">Cloud Reasoning Agent (Gemini)</div>
+          <strong>uncertain</strong> (confidence 0.0)<br><span class='muted'>GEMINI_API_KEY not configured — cannot reach Cloud Reasoning Agent</span>
+        </div></div>
+      <div class='muted'>Consensus: <strong>disagree</strong></div>
+      <div>Final action: <strong>no_action</strong>
+        <span class='muted'>(disagreement — human escalation)</span></div>
+      <div class='muted'>Notification sent via: <strong>console</strong></div>
+    </div>
+
+    <div class="trace-card">
+      <div class="trace-header">
+        <span>2026-07-05T14:47:30.300321+00:00</span>
+        <span class="muted">zone=zone_1</span>
+      </div>
+      <div class="muted trace-snapshot">Sensor snapshot: timestamp=2026-07-05T14:47:27.945847+00:00, soil_moisture_pct=65, leaf_health_score=0.92, pest_risk_score=0.9, temperature_c=27.7, wind_speed_kmh=28, wind_direction=SE, power_available=True, forecast_rain_next_6h=False</div>
+      <div class="discussion">
+        <div class="discussion-col">
+          <div class="discussion-role">Local Decision Agent (Ollama)</div>
+          <strong>spray_pesticide</strong> (confidence 0.95)<br><span class='muted'>The pest risk score is very high (0.9), indicating an immediate threat that requires intervention. While soil moisture (65%) is adequate and leaf health (0.92) is good, the elevated pest pressure necessitates proactive treatment to prevent yield loss. This concern outweighs the current soil/leaf status.</span>
+        </div>
+        <div class="discussion-col">
+          <div class="discussion-role">Cloud Reasoning Agent (Gemini)</div>
+          <strong>uncertain</strong> (confidence 0.0)<br><span class='muted'>GEMINI_API_KEY not configured — cannot reach Cloud Reasoning Agent</span>
+        </div></div>
+      <div class='muted'>Consensus: <strong>disagree</strong></div>
+      <div>Final action: <strong>no_action</strong>
+        <span class='muted'>(disagreement — human escalation)</span></div>
+      <div class='muted'>Notification sent via: <strong>console</strong></div>
+    </div>
+
+    <div class="trace-card">
+      <div class="trace-header">
+        <span>2026-07-05T14:47:27.943601+00:00</span>
+        <span class="muted">zone=zone_1</span>
+      </div>
+      <div class="muted trace-snapshot">Sensor snapshot: timestamp=2026-07-05T14:47:25.229106+00:00, soil_moisture_pct=65, leaf_health_score=0.4, pest_risk_score=0.7, temperature_c=30, wind_speed_kmh=9.9, wind_direction=NW, power_available=True, forecast_rain_next_6h=False</div>
+      <div class="discussion">
+        <div class="discussion-col">
+          <div class="discussion-role">Local Decision Agent (Ollama)</div>
+          <strong>spray_pesticide</strong> (confidence 0.95)<br><span class='muted'>The leaf health score (0.4) indicates significant stress/disease, and the pest risk score (0.7) is high. Since both require intervention, I prioritize the pest management action as it addresses an active biological threat indicated by the high pest risk score, which often correlates with visible damage reflected in the low leaf health score. The combination of low leaf health and high pest risk necessitates immediate chemical intervention to prevent yield loss.</span>
+        </div>
+        <div class="discussion-col">
+          <div class="discussion-role">Cloud Reasoning Agent (Gemini)</div>
+          <strong>uncertain</strong> (confidence 0.0)<br><span class='muted'>GEMINI_API_KEY not configured — cannot reach Cloud Reasoning Agent</span>
+        </div></div>
+      <div class='muted'>Consensus: <strong>disagree</strong></div>
+      <div>Final action: <strong>no_action</strong>
+        <span class='muted'>(disagreement — human escalation)</span></div>
+      <div class='muted'>Notification sent via: <strong>console</strong></div>
+    </div>
+
+    <div class="trace-card">
+      <div class="trace-header">
+        <span>2026-07-05T14:47:25.227014+00:00</span>
+        <span class="muted">zone=zone_1</span>
+      </div>
+      <div class="muted trace-snapshot">Sensor snapshot: timestamp=2026-07-05T14:47:22.684399+00:00, soil_moisture_pct=65, leaf_health_score=0.6, pest_risk_score=0.8, temperature_c=27, wind_speed_kmh=9.5, wind_direction=SW, power_available=True, forecast_rain_next_6h=False</div>
+      <div class="discussion">
+        <div class="discussion-col">
+          <div class="discussion-role">Local Decision Agent (Ollama)</div>
+          <strong>spray_pesticide</strong> (confidence 0.95)<br><span class='muted'>The pest risk score (0.8) is high, indicating an immediate need for intervention. While soil moisture (65%) is within a moderate range and leaf health (0.6) suggests some stress, the elevated pest pressure is the most critical limiting factor requiring decisive action. The temperature (27°C) is favorable for pesticide efficacy.</span>
+        </div>
+        <div class="discussion-col">
+          <div class="discussion-role">Cloud Reasoning Agent (Gemini)</div>
+          <strong>uncertain</strong> (confidence 0.0)<br><span class='muted'>GEMINI_API_KEY not configured — cannot reach Cloud Reasoning Agent</span>
+        </div></div>
+      <div class='muted'>Consensus: <strong>disagree</strong></div>
+      <div>Final action: <strong>no_action</strong>
+        <span class='muted'>(disagreement — human escalation)</span></div>
+      <div class='muted'>Notification sent via: <strong>console</strong></div>
+    </div>
+
+    <div class="trace-card">
+      <div class="trace-header">
+        <span>2026-07-05T14:47:22.682225+00:00</span>
+        <span class="muted">zone=zone_1</span>
+      </div>
+      <div class="muted trace-snapshot">Sensor snapshot: timestamp=2026-07-05T14:47:20.098399+00:00, soil_moisture_pct=65, leaf_health_score=0.9, pest_risk_score=0.05, temperature_c=27.2, wind_speed_kmh=8.7, wind_direction=W, power_available=True, forecast_rain_next_6h=False</div>
+      <div class="discussion">
+        <div class="discussion-col">
+          <div class="discussion-role">Local Decision Agent (Ollama)</div>
+          <strong>no_action</strong> (confidence 1.0)<br><span class='muted'>Soil moisture (65%) is adequate for optimal growth. Leaf health score (0.9) indicates excellent plant vigor. Pest risk score (0.05) is very low. Temperature (27.2°C) is within the ideal range. No immediate agronomic intervention is required.</span>
+        </div></div>
+      
+      <div>Final action: <strong>no_action</strong>
+        </div>
+      
+    </div>
+
+    <div class="trace-card">
+      <div class="trace-header">
+        <span>2026-07-05T14:47:20.093913+00:00</span>
+        <span class="muted">zone=zone_1</span>
+      </div>
+      <div class="muted trace-snapshot">Sensor snapshot: timestamp=2026-07-05T14:46:43.313465+00:00, soil_moisture_pct=12, leaf_health_score=0.94, pest_risk_score=0.08, temperature_c=24.6, wind_speed_kmh=8.6, wind_direction=NW, power_available=True, forecast_rain_next_6h=False</div>
+      <div class="discussion">
+        <div class="discussion-col">
+          <div class="discussion-role">Local Decision Agent (Ollama)</div>
+          <strong>irrigate</strong> (confidence 0.95)<br><span class='muted'>The soil moisture is critically low at 12% (well below optimal range), indicating immediate water stress for the crop. While pest risk is low (0.08) and leaf health is high (0.94), the severe deficit in soil moisture requires immediate irrigation to support plant function.</span>
+        </div></div>
+      
+      <div>Final action: <strong>irrigate</strong>
+        </div>
+      
+    </div>
+  </section>
+
+  <section>
+    <h2>Decision log</h2>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>Timestamp</th><th>Zone</th><th>Source</th><th>Action</th>
+      <th>Confidence</th><th>Block reason</th><th>Cost</th></tr></thead>
+      <tbody><tr><td>2026-07-05T14:47:20.089571+00:00</td><td>zone_1</td><td>Local (Ollama, $0)</td><td>irrigate</td><td>0.95</td><td></td><td>$0.0000</td></tr>
+<tr><td>2026-07-05T14:47:22.678941+00:00</td><td>zone_1</td><td>Local (Ollama, $0)</td><td>no_action</td><td>1.0</td><td></td><td>$0.0000</td></tr>
+<tr><td>2026-07-05T14:47:25.223594+00:00</td><td>zone_1</td><td>Escalated to human</td><td>no_action</td><td>0.95</td><td>disagreement — human escalation</td><td>$0.0100</td></tr>
+<tr><td>2026-07-05T14:47:27.940581+00:00</td><td>zone_1</td><td>Escalated to human</td><td>no_action</td><td>0.95</td><td>disagreement — human escalation</td><td>$0.0100</td></tr>
+<tr><td>2026-07-05T14:47:30.297225+00:00</td><td>zone_1</td><td>Escalated to human</td><td>no_action</td><td>0.95</td><td>disagreement — human escalation</td><td>$0.0100</td></tr>
+<tr><td>2026-07-05T14:47:31.439589+00:00</td><td>zone_1</td><td>Escalated to human</td><td>no_action</td><td>0.95</td><td>disagreement — human escalation</td><td>$0.0100</td></tr></tbody>
+    </table></div>
+  </section>
+</body>
+</html>

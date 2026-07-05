@@ -1,0 +1,63 @@
+[
+  {
+    "id": 1,
+    "name": "clear_cut_irrigation_need",
+    "zone_id": "zone_1",
+    "overrides": {
+      "soil_moisture_pct": 12,
+      "forecast_rain_next_6h": false
+    }
+  },
+  {
+    "id": 2,
+    "name": "clear_cut_no_action",
+    "zone_id": "zone_1",
+    "overrides": {
+      "soil_moisture_pct": 65,
+      "pest_risk_score": 0.05,
+      "forecast_rain_next_6h": false
+    }
+  },
+  {
+    "id": 3,
+    "name": "ambiguous_pest_signal",
+    "zone_id": "zone_1",
+    "overrides": {
+      "soil_moisture_pct": 65,
+      "pest_risk_score": 0.8,
+      "leaf_health_score": 0.6,
+      "temperature_c": 27
+    }
+  },
+  {
+    "id": 4,
+    "name": "cloud_escalation_consensus",
+    "zone_id": "zone_1",
+    "overrides": {
+      "soil_moisture_pct": 65,
+      "pest_risk_score": 0.7,
+      "leaf_health_score": 0.4,
+      "temperature_c": 30
+    }
+  },
+  {
+    "id": 5,
+    "name": "safety_override_wind",
+    "zone_id": "zone_1",
+    "overrides": {
+      "soil_moisture_pct": 65,
+      "pest_risk_score": 0.9,
+      "wind_speed_kmh": 28
+    }
+  },
+  {
+    "id": 6,
+    "name": "power_constraint",
+    "zone_id": "zone_1",
+    "overrides": {
+      "soil_moisture_pct": 65,
+      "pest_risk_score": 0.9,
+      "power_available": false
+    }
+  }
+]

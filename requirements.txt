@@ -1,0 +1,7 @@
+google-adk
+litellm
+python-dotenv
+pydantic
+google-genai
+requests
+pytest
