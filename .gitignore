@@ -6,5 +6,3 @@ __pycache__/
 data/logs/*.csv
 data/logs/*.jsonl
 .claude/
-
-dashboard/report.html
