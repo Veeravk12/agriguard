@@ -6,9 +6,6 @@ called in when a decision is uncertain or high-stakes; a deterministic safety
 layer has the final say over both; and a human farm owner is notified over
 Telegram whenever the two models disagree.
 
-See `AgriGuard_Project_Plan.md` for the original design write-up (architecture
-rationale, cost-cascade reasoning, safety design, bottleneck analysis).
-
 Track: **Agents for Good** (Agriculture) — Kaggle "AI Agents: Intensive Vibe
 Coding Capstone Project".
 
@@ -18,7 +15,7 @@ Coding Capstone Project".
 |---|---|
 | Multi-agent system (ADK) | `src/agents/` — 7 ADK-based/deterministic agents cooperating in a cost-aware cascade: `local_decision_agent.py` (Ollama), `cloud_reasoning_agent.py` (Gemini), `consensus_agent.py`, `safety_rules.py`, `actuator_agent.py`, `notification_agent.py`, `query_agent.py`, `chat_agent.py` |
 | Security features | `safety_rules.py` is plain deterministic Python that no model — and no human Telegram reply — can override; secrets are loaded from `.env` (gitignored) via `src/config.py`, never hardcoded; `.env.example` ships with placeholders only |
-| Deployability | Self-contained Kaggle notebook (`notebooks/kaggle_submission_notebook.ipynb`) installs and serves Ollama in-kernel; `README.md`/`commands.txt` give full local setup instructions; `run.sh` is a single command to start continuous operation |
+| Deployability | This README gives full local setup instructions; `run.sh` is a single command to start continuous operation; the system also runs self-contained inside a Kaggle notebook, installing and serving Ollama in-kernel |
 
 That's 3 of the 6 listed concepts, comfortably meeting the "at least 3" requirement.
 
@@ -32,8 +29,7 @@ it than run it locally.
 
 ## Status
 
-Must-have, Should-have, and most of the Could-have tier from the plan are
-built and verified end-to-end against live Ollama, Gemini, and Telegram:
+Built and verified end-to-end against live Ollama, Gemini, and Telegram:
 
 - Sensor simulation + fan-in aggregator (`src/sensors/`)
 - Local Decision Agent (Ollama via ADK) and Cloud Reasoning Agent (Gemini via
@@ -52,13 +48,8 @@ built and verified end-to-end against live Ollama, Gemini, and Telegram:
   sensor writes, a bounded Gemini call budget per session, and guaranteed
   human-in-the-loop demo escalations so the whole loop is visible without
   spending real API quota
-- A self-contained Kaggle submission notebook that installs and serves Ollama
-  in-kernel (`notebooks/kaggle_submission_notebook.ipynb`)
-
-Not built (cut, per the plan's Could-have tier): the scheduled reporter agent
-(automatic photo reports every 2 hours) and an MCP server wrapper. Both were
-explicitly lower priority than the Telegram concierge features above, which
-are done instead.
+- A self-contained Kaggle notebook version that installs and serves Ollama
+  in-kernel, for running the same system directly in a Kaggle environment
 
 Note: Gemini's free tier caps `gemini-2.5-flash` at 20 requests/day per
 Google Cloud project. If you see `escalated_to_human` with a "Cloud
@@ -70,7 +61,6 @@ bug — the fail-safe design is working as intended.
 ```
 run.py                  One-shot scripted demo: 6 fixed scenarios, then exits
 run.sh                  Starts continuous live monitoring (recommended)
-commands.txt            Full command reference
 
 src/
   config.py             Env-driven settings (Ollama, Gemini, Telegram, safety limits)
@@ -98,7 +88,6 @@ src/
 dashboard/dashboard.py    Generates the self-contained HTML dashboard
 data/scenarios.json        The 6 fixed scenarios used by run.py
 tests/test_consensus_agent.py   Unit tests (consensus, notification, query parsing)
-notebooks/kaggle_submission_notebook.ipynb   Kaggle-ready notebook version
 ```
 
 ## Setup
@@ -122,8 +111,6 @@ notebooks/kaggle_submission_notebook.ipynb   Kaggle-ready notebook version
      message your new bot once, then visit
      `https://api.telegram.org/bot<TOKEN>/getUpdates` and read `message.chat.id`
      from the JSON response.
-
-`commands.txt` has the full command reference from venv activation onward.
 
 ## Running it
 
