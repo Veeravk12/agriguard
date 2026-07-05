@@ -4,4 +4,3 @@ python-dotenv
 pydantic
 google-genai
 requests
-pytest

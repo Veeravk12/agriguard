@@ -87,7 +87,6 @@ src/
 
 dashboard/dashboard.py    Generates the self-contained HTML dashboard
 data/scenarios.json        The 6 fixed scenarios used by run.py
-tests/test_consensus_agent.py   Unit tests (consensus, notification, query parsing)
 ```
 
 ## Setup
@@ -139,12 +138,6 @@ python run.py
 python -m dashboard.dashboard
 ```
 
-**Tests:**
-
-```
-pytest tests/
-```
-
 ## Architecture at a glance
 
 ```
@@ -169,3 +162,28 @@ sensors --> aggregator --> Local Decision Agent (Ollama, free)
 The Safety Rule Layer is plain deterministic Python, not a model, and applies
 identically whether the action came from a model consensus or a human's
 Telegram reply — nothing can talk it out of blocking an unsafe action.
+
+## Future improvements
+
+- **Workflow automation via n8n** — route notifications and human-in-the-loop
+  decisions through an n8n workflow instead of talking to the Telegram API
+  directly, so the same alert can fan out to email/Slack/SMS, or trigger a
+  downstream action (e.g. auto-ordering more pesticide) without touching this
+  codebase.
+- **MCP server wrapper** — expose the agents as MCP tools so other AI clients
+  can query farm status or trigger the same safety-gated actions, instead of
+  Telegram being the only interface.
+- **Real sensor/actuator hardware** — swap the simulated sensor readings and
+  actuator calls for real IoT devices (soil probes, a drone control API);
+  the decision cascade and safety layer don't need to change at all.
+- **Multi-zone scaling** — `config.py` already models zones as a list;
+  `live_monitor.py` currently only runs one. Running several zones
+  concurrently, each on its own decision cadence, is a natural next step for
+  a real multi-field farm.
+- **Computer vision pest detection** — replace the synthetic pest risk score
+  with real image classification on camera feed input.
+- **Persistent storage** — move from CSV/JSONL logs to a proper database for
+  historical analytics across many sessions, instead of per-run log files.
+- **Conversational memory** — the chat agent currently treats every Telegram
+  message independently; carrying session context across messages would
+  let it handle natural follow-up questions.
