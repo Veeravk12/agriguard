@@ -15,7 +15,7 @@ Coding Capstone Project".
 |---|---|
 | Multi-agent system (ADK) | `src/agents/` — 7 ADK-based/deterministic agents cooperating in a cost-aware cascade: `local_decision_agent.py` (Ollama), `cloud_reasoning_agent.py` (Gemini), `consensus_agent.py`, `safety_rules.py`, `actuator_agent.py`, `notification_agent.py`, `query_agent.py`, `chat_agent.py` |
 | Security features | `safety_rules.py` is plain deterministic Python that no model — and no human Telegram reply — can override; secrets are loaded from `.env` (gitignored) via `src/config.py`, never hardcoded; `.env.example` ships with placeholders only |
-| Deployability | This README gives full local setup instructions; `run.sh` is a single command to start continuous operation; the system also runs self-contained inside a Kaggle notebook, installing and serving Ollama in-kernel |
+| Deployability | This README gives full local setup instructions (Ollama, Python deps, `.env` config); `run.sh` is a single command to start continuous operation |
 
 That's 3 of the 6 listed concepts, comfortably meeting the "at least 3" requirement.
 
@@ -48,8 +48,6 @@ Built and verified end-to-end against live Ollama, Gemini, and Telegram:
   sensor writes, a bounded Gemini call budget per session, and guaranteed
   human-in-the-loop demo escalations so the whole loop is visible without
   spending real API quota
-- A self-contained Kaggle notebook version that installs and serves Ollama
-  in-kernel, for running the same system directly in a Kaggle environment
 
 Note: Gemini's free tier caps `gemini-2.5-flash` at 20 requests/day per
 Google Cloud project. If you see `escalated_to_human` with a "Cloud
