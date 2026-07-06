@@ -22,10 +22,7 @@ That's 3 of the 6 listed concepts, comfortably meeting the "at least 3" requirem
 ## For reviewers
 
 This runs against local infrastructure (Ollama, and optionally a personal
-Gemini API key / Telegram bot), so there's no hosted public demo — this
-repository is the required "public project link," with full setup below.
-The demo video covers the same walkthrough end to end if you'd rather watch
-it than run it locally.
+Gemini API key / Telegram bot).
 
 ## Status
 
